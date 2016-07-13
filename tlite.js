@@ -10,6 +10,18 @@ function tlite(getTooltipOpts) {
 
     opts &&  tlite.show(el, opts, true);
   });
+
+  document.addEventListener('touchstart', function (e) {
+    var el = e.target;
+    var opts = getTooltipOpts(el);
+
+    if (!opts) {
+      el = el.parentElement;
+      opts = el && getTooltipOpts(el);
+    }
+
+    opts && tlite.show(el, opts, true) || tlite.hideAll(document.getElementsByClassName('tlite-visible'), true);
+  });
 }
 
 tlite.show = function (el, opts, isAuto) {
@@ -22,7 +34,6 @@ tlite.show = function (el, opts, isAuto) {
     var showTimer;
     var text;
 
-    el.addEventListener('mousedown', autoHide);
     el.addEventListener('mouseleave', autoHide);
 
     function show() {
@@ -104,6 +115,13 @@ tlite.show = function (el, opts, isAuto) {
 tlite.hide = function (el, isAuto) {
   el.tooltip && el.tooltip.hide(isAuto);
 };
+
+tlite.hideAll = function(els, isAuto) {
+  for (var i=0; i<els.length; i++) {
+    el = els[i].parentElement;
+    tlite.hide(el, isAuto);
+  }
+}
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = tlite;
